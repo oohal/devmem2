@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 
 	/* Map one page */
 	map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, target & ~MAP_MASK);
-	if (map_base == (void *) -1)
+	if (map_base == MAP_FAILED)
 		FATAL;
 	printf("Memory mapped at address %p.\n", map_base);
 	fflush(stdout);
