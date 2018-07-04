@@ -43,6 +43,17 @@
   __LINE__, __FILE__, errno, strerror(errno)); exit(1); } while(0)
 
 
+void usage(const char *name)
+{
+	fprintf(stderr, "\nUsage:\t%s { address } [ type [ data ] ]\n"
+		"\taddress : memory address to act upon\n"
+		"\ttype    : access operation type : [b]yte, [h]alfword, [w]ord\n"
+		"\tdata    : data to be written\n\n",
+		name);
+
+	exit(1);
+}
+
 int main(int argc, char **argv)
 {
 	unsigned long read_result, writeval;
@@ -52,14 +63,9 @@ int main(int argc, char **argv)
 	off_t target;
 	int fd;
 
-	if (argc < 2) {
-		fprintf(stderr, "\nUsage:\t%s { address } [ type [ data ] ]\n"
-			"\taddress : memory address to act upon\n"
-			"\ttype    : access operation type : [b]yte, [h]alfword, [w]ord\n"
-			"\tdata    : data to be written\n\n",
-			argv[0]);
-		exit(1);
-	}
+	if (argc < 2)
+		usage(argv[0]);
+
 	target = strtoul(argv[1], 0, 0);
 
 	if (argc > 2)
