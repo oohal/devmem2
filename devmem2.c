@@ -66,18 +66,22 @@ int main(int argc, char **argv)
 	if (argc > 2)
 		access_type = tolower(argv[2][0]);
 
-	if((fd = open("/dev/mem", O_RDWR | O_SYNC)) == -1) FATAL;
+	fd = open("/dev/mem", O_RDWR | O_SYNC);
+	if (fd == -1)
+		FATAL;
+
 	printf("/dev/mem opened.\n");
 	fflush(stdout);
 
 	/* Map one page */
 	map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, target & ~MAP_MASK);
-	if(map_base == (void *) -1) FATAL;
+	if (map_base == (void *) -1)
+		FATAL;
 	printf("Memory mapped at address %p.\n", map_base);
 	fflush(stdout);
 
 	virt_addr = map_base + (target & MAP_MASK);
-	switch(access_type) {
+	switch (access_type) {
 		case 'b':
 			read_result = *((unsigned char *) virt_addr);
 			break;
@@ -96,7 +100,7 @@ int main(int argc, char **argv)
 		target, virt_addr, read_result);
 	fflush(stdout);
 
-	if(argc > 3) {
+	if (argc > 3) {
 		writeval = strtoul(argv[3], 0, 0);
 
 		switch(access_type) {
@@ -118,7 +122,9 @@ int main(int argc, char **argv)
 		fflush(stdout);
 	}
 
-	if(munmap(map_base, MAP_SIZE) == -1) FATAL;
+	if (munmap(map_base, MAP_SIZE) == -1)
+		FATAL;
+
 	close(fd);
 	return 0;
 }
