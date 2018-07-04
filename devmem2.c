@@ -50,11 +50,12 @@ void usage(const char *name)
 {
 	fprintf(stderr, "\nUsage:\t%s { address } [ type [ data ] ]\n"
 		"\taddress : memory address to act upon\n"
-		"\tsize    : access size [b]yte, [h]alfword, [w]ord\n"
-		"\t          These names are for compatibility with other\n"
-		"\t          versions of devmem. The access size is always\n"
-		"\t          8, 16, or 32 bits respectively\n"
-		"\tdata    : data to be written\n\n",
+		"\tsize    : access size [b]yte, [h]alfword, [w]ord, [l]ong\n"
+		"\tdata    : data to be written\n"
+		"\n"
+		"\tNB: The size names are just for compatibility with other\n"
+		"\tversions of devmem2. The actual access sizes are 8, 16,\n"
+		"\t32, and 64 bits respectively.\n",
 		name);
 
 	exit(1);
@@ -106,6 +107,9 @@ int main(int argc, char **argv)
 		case 'w':
 			read_result = *((uint32_t *) virt_addr);
 			break;
+		case 'l':
+			read_result = *((uint64_t *) virt_addr);
+			break;
 		default:
 			fprintf(stderr, "Illegal data type '%c'.\n",
 				access_type);
@@ -130,6 +134,10 @@ int main(int argc, char **argv)
 		case 'w':
 			*((uint32_t *) virt_addr) = writeval;
 			read_result = *((uint32_t *) virt_addr);
+			break;
+		case 'l':
+			*((uint64_t *) virt_addr) = writeval;
+			read_result = *((uint64_t *) virt_addr);
 			break;
 		}
 
