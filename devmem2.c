@@ -39,6 +39,9 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 
+#include <stdint.h>
+#include <inttypes.h>
+
 #define FATAL do { fprintf(stderr, "Error at line %d, file %s (%d) [%s]\n", \
   __LINE__, __FILE__, errno, strerror(errno)); exit(1); } while(0)
 
@@ -47,7 +50,10 @@ void usage(const char *name)
 {
 	fprintf(stderr, "\nUsage:\t%s { address } [ type [ data ] ]\n"
 		"\taddress : memory address to act upon\n"
-		"\ttype    : access operation type : [b]yte, [h]alfword, [w]ord\n"
+		"\tsize    : access size [b]yte, [h]alfword, [w]ord\n"
+		"\t          These names are for compatibility with other\n"
+		"\t          versions of devmem. The access size is always\n"
+		"\t          8, 16, or 32 bits respectively\n"
 		"\tdata    : data to be written\n\n",
 		name);
 
@@ -56,7 +62,7 @@ void usage(const char *name)
 
 int main(int argc, char **argv)
 {
-	unsigned long read_result, writeval;
+	uint64_t read_result, writeval;
 	void *map_base, *virt_addr;
 	int access_type = 'w';
 	long page_size;
@@ -92,20 +98,20 @@ int main(int argc, char **argv)
 	virt_addr = map_base + (target & (page_size - 1));
 	switch (access_type) {
 		case 'b':
-			read_result = *((unsigned char *) virt_addr);
+			read_result = *((uint8_t *) virt_addr);
 			break;
 		case 'h':
-			read_result = *((unsigned short *) virt_addr);
+			read_result = *((uint16_t *) virt_addr);
 			break;
 		case 'w':
-			read_result = *((unsigned long *) virt_addr);
+			read_result = *((uint32_t *) virt_addr);
 			break;
 		default:
 			fprintf(stderr, "Illegal data type '%c'.\n",
 				access_type);
 			exit(2);
 	}
-	printf("Value at address 0x%X (%p): 0x%X\n",
+	printf("Value at address %#" PRIX64 "(%p): %#" PRIX64"\n",
 		target, virt_addr, read_result);
 	fflush(stdout);
 
@@ -114,20 +120,21 @@ int main(int argc, char **argv)
 
 		switch(access_type) {
 		case 'b':
-			*((unsigned char *) virt_addr) = writeval;
-			read_result = *((unsigned char *) virt_addr);
+			*((uint8_t *) virt_addr) = writeval;
+			read_result = *((uint8_t *) virt_addr);
 			break;
 		case 'h':
-			*((unsigned short *) virt_addr) = writeval;
-			read_result = *((unsigned short *) virt_addr);
+			*((uint16_t *) virt_addr) = writeval;
+			read_result = *((uint16_t *) virt_addr);
 			break;
 		case 'w':
-			*((unsigned long *) virt_addr) = writeval;
-			read_result = *((unsigned long *) virt_addr);
+			*((uint32_t *) virt_addr) = writeval;
+			read_result = *((uint32_t *) virt_addr);
 			break;
 		}
 
-		printf("Written 0x%X; readback 0x%X\n", writeval, read_result);
+		printf("Written %#"PRIX64"; readback %#" PRIX64 "\n",
+			writeval, read_result);
 		fflush(stdout);
 	}
 
