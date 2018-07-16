@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 				access_type);
 			exit(2);
 	}
-	printf("Value at address %#" PRIX64 "(%p): %#" PRIX64"\n",
+	printf("Value at address %#" PRIx64 "(%p): %#" PRIx64"\n",
 		target, virt_addr, read_result);
 	fflush(stdout);
 
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		printf("Written %#"PRIX64"; readback %#" PRIX64 "\n",
+		printf("Written %#"PRIx64"; readback %#" PRIx64 "\n",
 			writeval, read_result);
 		fflush(stdout);
 	}
