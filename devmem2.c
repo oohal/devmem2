@@ -59,7 +59,7 @@ void usage(const char *name)
 		"\n"
 		"\tNB: The size names are just for compatibility with other\n"
 		"\tversions of devmem2. The actual access sizes are 8, 16,\n"
-		"\t32, and 64 bits respectively.\n",
+		"\t32, and 64 bits respectively.\n"
 		"\t\n"
 		"\tAccesses are LE by default\n",
 		name);
@@ -97,10 +97,6 @@ int main(int argc, char **argv)
 	if (fd == -1)
 		FATAL;
 
-	printf("/dev/mem opened.\n");
-	fflush(stdout);
-
-
 	/* NB: The page size isn't always 4KB */
 	page_size = sysconf(_SC_PAGESIZE);
 
@@ -108,8 +104,6 @@ int main(int argc, char **argv)
 			target & ~(page_size - 1));
 	if (map_base == MAP_FAILED)
 		FATAL;
-	printf("Memory mapped at address %p.\n", map_base);
-	fflush(stdout);
 
 	virt_addr = map_base + (target & (page_size - 1));
 	switch (access_type) {
@@ -142,8 +136,8 @@ int main(int argc, char **argv)
 				access_type);
 			exit(2);
 	}
-	printf("Value at address %#" PRIx64 "(%p): %#" PRIx64"\n",
-		target, virt_addr, read_result);
+	printf("Value at address %#" PRIx64 ": %#" PRIx64"\n",
+		target, read_result);
 	fflush(stdout);
 
 	if (argc > 3) {
@@ -187,7 +181,7 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		printf("Written %#"PRIx64"; readback %#" PRIx64 "\n",
+		printf("Wrote %#"PRIx64"; readback %#" PRIx64 "\n",
 			writeval, read_result);
 		fflush(stdout);
 	}
